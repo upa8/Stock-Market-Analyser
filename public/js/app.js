@@ -1,4 +1,4 @@
-var stockMarketAnalyser = angular.module('stockMarketAnalyser', ['ngRoute']);
+var stockMarketAnalyser = angular.module('stockMarketAnalyser', ['ngRoute','ngWebSocket']);
 
 // ecomApp config Config method
 stockMarketAnalyser.config(function($routeProvider){
@@ -15,9 +15,6 @@ stockMarketAnalyser.config(function($routeProvider){
 // Custome directives
 
 // Register all the factories 
-//ecomApp.factory('productFactory', productFactory);
-//stockMarketAnalyser.factory('appFactory', appFactory);
-//stockMarketAnalyser.factory('restApi', restApi);
 
 // Register all the controllers 
 stockMarketAnalyser.controller('stockController', stockController);
