@@ -1,22 +1,30 @@
 import random
-import string
+import os, os.path
 
 import cherrypy
 
+from cherrypy.lib.static import serve_file
 
-class StringGenerator(object):
-    @cherrypy.expose
-    def index(self):
-        return "Hello world!"
+from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
+from ws4py.websocket import WebSocket
+from ws4py.messaging import TextMessage
 
-    @cherrypy.expose
-    def generate(self, length=8):
-        return ''.join(random.sample(string.hexdigits, int(length)))
-
-    @cherrypy.expose
-    def pratik(self):
-        return 'Praik'
-
+class StockMarketAnalyser(object):
+    pass
 
 if __name__ == '__main__':
-    cherrypy.quickstart(StringGenerator())
+     
+     root = os.path.dirname(os.path.abspath(__file__))
+     
+     conf = {
+         '/': {
+             'tools.staticdir.on': True,
+             'tools.staticdir.dir': root + '/public/',
+             'tools.staticdir.index': root + '/public/index.html'
+         }
+     }
+     
+     webapp = StockMarketAnalyser()
+     
+     cherrypy.quickstart(webapp,'/',conf)
+		
