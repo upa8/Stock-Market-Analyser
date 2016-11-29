@@ -30,8 +30,10 @@ class Root(object):
       <script type='application/javascript'>
         $(document).ready(function() {
 
-          websocket = '%(scheme)s://%(host)s:%(port)s/ws';
-          if (window.WebSocket) {
+        //  websocket = '%(scheme)s://%(host)s:%(port)s/ws';
+         //websocket = "ws://echo.websocket.org";
+            websocket = "ws://54.242.218.128:9000/ws"
+        if (window.WebSocket) {
             ws = new WebSocket(websocket);
           }
           else if (window.MozWebSocket) {
