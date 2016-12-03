@@ -4,15 +4,18 @@ import os
 import time
 import cherrypy
 import threading
+import redis
 
 from threading import Thread
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket
 from ws4py.messaging import TextMessage
 
+
 class RedisResultSender(Thread):
     def __init__(self,threadName):
         Thread.__init__(self)
+        self.DB = redis.StrictRedis(host='localhost', port=6379, db=0)
         self.name = threadName
         self.count = 0
         cherrypy.engine.publish('websocket-broadcast', "Thread instance created init method ")
@@ -20,11 +23,13 @@ class RedisResultSender(Thread):
     def run(self):
         cherrypy.engine.publish('websocket-broadcast', "Thread run method")
         while True:
-            cherrypy.engine.publish('websocket-broadcast', self.name)
-            time.sleep(2)
-            self.name = self.count
-            self.count = self.count + 1 
-
+            if (self.DB.get('newData') == '1'):
+                cherrypy.engine.publish('websocket-broadcast', self.name)
+                time.sleep(2)
+                self.name = self.count
+                self.count = self.count + 1 
+            
+            
 class ChatWebSocketHandler(WebSocket):
     def opened(self):
         ack = "you are connected"
