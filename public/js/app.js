@@ -15,8 +15,10 @@ stockMarketAnalyser.config(function($routeProvider){
 // Custome directives
 
 // Register all the factories 
+stockMarketAnalyser.factory('restApi', restApi);
 
 // Register all the controllers 
 stockMarketAnalyser.controller('stockController', stockController);
+
 
 

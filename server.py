@@ -35,17 +35,17 @@ class StockParser:
         return jsonData
         #json['time']
 
-# url = "https://www.nseindia.com/live_market/dynaContent/live_analysis/gainers/niftyGainers1.json"
-# stockParser = StockParser(url)
-        
-# results = stockParser.getResults()
-
-# print results                
+class RedisInstance(object):
+    def __init__(self):
+        self.DB = redis.StrictRedis(host='localhost', port=6379, db=0)
+    def getRedisInstance(self):
+        return self.DB
+    
 
 class RedisResultSender(Thread):
     def __init__(self,threadName):
         Thread.__init__(self)
-        self.DB = redis.StrictRedis(host='localhost', port=6379, db=0)
+        self.DB = RedisInstance().getRedisInstance()
         self.name = threadName
         self.count = 0
         url = "https://www.nseindia.com/live_market/dynaContent/live_analysis/gainers/niftyGainers1.json"
@@ -53,20 +53,17 @@ class RedisResultSender(Thread):
         cherrypy.engine.publish('websocket-broadcast', "Thread instance created init method ")
 
     def run(self):
-
         cherrypy.log("Thread started")
         cherrypy.engine.publish('websocket-broadcast', "Thread run method")
         while True:
             if (self.DB.get('newData') == '1'):
-                cherrypy.log("Server sending message")
-                cherrypy.engine.publish('websocket-broadcast', self.name)
-                time.sleep(2)
                 results = self.StockParser.getResults()
-                cherrypy.log(results['time'])
+                latestData = json.dumps(results)
+                self.DB.set('nifty50',latestData)
+                self.DB.set('newData','0')
+                time.sleep(2) # purposely given time 
                 cherrypy.engine.publish('websocket-broadcast', json.dumps(results))
-                self.name = self.count
-                self.count = self.count + 1 
-            
+                
             
 class ChatWebSocketHandler(WebSocket):
     def opened(self):
@@ -79,6 +76,8 @@ class ChatWebSocketHandler(WebSocket):
         cherrypy.engine.publish('websocket-broadcast', "Closing the server")
         cherrypy.engine.publish('websocket-broadcast', TextMessage(reason))
 
+def CORS():
+    cherrypy.response.headers["Access-Control-Allow-Origin"] = "http://localhost"
 
 class WS(object):
     @cherrypy.expose
@@ -91,6 +90,13 @@ class Static(object):
     def index(self):
         pass
 
+    @cherrypy.expose
+    def getLatestData(self):
+        cherrypy.response.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:9000"
+        cherrypy.log("Requested")
+        DB = RedisInstance()
+        results = DB.get('nifty50')
+        return results
 
 root = os.path.dirname(os.path.abspath(__file__))
 
@@ -112,11 +118,13 @@ staticConfig = {
                             'tools.staticdir.dir': root + '/public/',
                             'tools.staticdir.index': root + '/public/index.html',
                             'tools.log_headers.on': False,
-                            'tools.log_tracebacks.on':False
+                            'tools.log_tracebacks.on':False,
+                            'tools.CORS.on': True
                         }
 
                 }
 
+cherrypy.tools.CORS = cherrypy.Tool('before_handler', CORS)
 #Mounting static files directories
 cherrypy.tree.mount(Static(),"/",staticConfig)
 
@@ -134,7 +142,5 @@ cherrypy.engine.start()
 # Start redis thread 
 redisThread = RedisResultSender(count)
 redisThread.start()    
-cherrypy.log("Server started")
-
 cherrypy.engine.block()
 
