@@ -6,8 +6,21 @@ function stockController($scope,$rootScope,$location,$http,$websocket) {
 	  var dataStream = $websocket('ws://127.0.0.1:9000/sock/ws');
 
       dataStream.onMessage(function(message) {
-      	console.log("Recieved message "+ message.data);
-      	$scope.isWorking = message.data;
+      	var dataInJson = JSON.parse(message.data);
+      	//console.log("Recieved message "+ JSON.stringify(JSON.parse(message.data),null,4));
+      	//console.log("Time+dataInJson.time "+typeof(dataInJson));
+      	angular.forEach(dataInJson, function(value, key){
+      		if(key == 'time'){
+      			console.log('TIme ' + value);
+      		}else{
+      			console.log(JSON.stringify(value[0],null,4));
+      		}
+      		/*console.log(typeof(key) +" key "+ key);
+      		console.log(typeof(value) +" value "+ value);*/
+
+      	});
+      	$scope.isWorking = message.data['time'];
+      
       });
 
       dataStream.onOpen(function() {
