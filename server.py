@@ -86,7 +86,7 @@ class ChatWebSocketHandler(WebSocket):
 
 root = os.path.dirname(os.path.abspath(__file__))
 def CORS():
-    cherrypy.response.headers["Access-Control-Allow-Origin"] = "http://0.0.0.0:9000" #http://127.0.0.1:9000
+    cherrypy.response.headers["Access-Control-Allow-Origin"] = "http://0.0.0.0:9000" #"http://127.0.0.1:9000"  
 
 ###############################################################################
 class WS(object):
@@ -106,7 +106,6 @@ class Api(object):
         cherrypy.log("Requested")
         DB = redis.StrictRedis(host='localhost', port=6379, db=0)
         results = DB.get('nifty50')
-        cherrypy.log("Data "+ results)
         return results
 ###############################################################################
 
