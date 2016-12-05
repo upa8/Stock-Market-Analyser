@@ -2,7 +2,7 @@ import argparse,random,os,time,cherrypy,threading,redis,requests,urllib2,json
 
 from datetime import datetime
 from pytz import timezone
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 from threading import Thread
 from ws4py.server.cherrypyserver import WebSocketPlugin, WebSocketTool
 from ws4py.websocket import WebSocket
