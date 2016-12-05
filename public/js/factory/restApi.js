@@ -1,13 +1,12 @@
 function restApi( $q , $rootScope,$http) {
 	
-	//var baseUrl = $websocket('http://54.242.218.128:9000/api');
-	var baseUrl =  'http://127.0.0.1:9000/api';
+	var baseUrl = $websocket('http://54.242.218.128:9000/api');
+	//var baseUrl =  'http://127.0.0.1:9000/api';
 	
 	var restApi = {};
 	
 	// getStock results
 	restApi.getStockResults = function(username,password){
-			console.log("Rest api called");
 			var defer=$q.defer();
 			$.ajax({
 		        type: "GET",
