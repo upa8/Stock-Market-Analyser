@@ -1,7 +1,48 @@
-<center><h1>NIFTY 50<h1></center>
-<center><h1>Time <h1><p>{{lastTime}}</p></center>
-<center>
-	
-	<p>{{results}}</p>
-
-</center>
+<div class="row">
+	<div class="col-sm-4">
+	</div>
+	<div class="col-sm-4">
+		<h1>NIFTY 50<h1>	
+	</div>
+	<div class="col-sm-4">
+		<h6>Time <h6><p>{{lastTime}}</p>			
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12">
+		<table class="table table-bordered">
+		    <thead>
+		      <tr>
+		        <th>LTP</th>
+		        <th>NetPrice</th>
+		        <th>LastCorpAnnouncement</th>
+		        <th>LastCorpAnnouncementDate</th>
+		        <th>Series</th>
+		        <th>Symbol</th>
+		        <th>OpenPrice</th>
+		        <th>PreviousPrice</th>
+		        <th>LowPrice</th>
+		        <th>TurnoverInLakhs</th>
+		        <th>TradedQuantity</th>
+		        <th>HighPrice</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <tr ng-repeat="stock in results">
+		        <td>{{stock['ltp']}}</td>
+		        <td>{{stock['netPrice']}}</td>
+		        <td>{{stock['lastCorpAnnouncement']}}</td>
+		        <td>{{stock['lastCorpAnnouncementDate']}}</td>
+		        <td>{{stock['series']}}</td>
+		        <td>{{stock['symbol']}}</td>
+		        <td>{{stock['openPrice']}}</td>
+		        <td>{{stock['previousPrice']}}</td>
+		        <td>{{stock['lowPrice']}}</td>
+		        <td>{{stock['turnoverInLakhs']}}</td>
+		        <td>{{stock['tradedQuantity']}}</td>
+		        <td>{{stock['highPrice']}}</td>
+		      </tr>
+		    </tbody>
+		</table>
+	</div>
+</div>

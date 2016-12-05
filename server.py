@@ -64,7 +64,7 @@ class RedisResultSender(Thread):
                 # SLEEP FOR SAT AND SUNDAY MINUTES
 
                 # pause for 2 and half minutes to update new data
-                time.sleep(150) # CALCULATE THE TIME 
+                time.sleep(130) # CALCULATE THE TIME 
                 self.DB.set('newData','1')
                 
 
@@ -86,7 +86,7 @@ class ChatWebSocketHandler(WebSocket):
 
 root = os.path.dirname(os.path.abspath(__file__))
 def CORS():
-    cherrypy.response.headers["Access-Control-Allow-Origin"] = "http://0.0.0.0:9000"
+    cherrypy.response.headers["Access-Control-Allow-Origin"] = "http://0.0.0.0:9000" #http://127.0.0.1:9000
 
 ###############################################################################
 class WS(object):
