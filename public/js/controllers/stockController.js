@@ -9,14 +9,14 @@ function stockController($scope,$rootScope,$location,$http,$websocket,restApi) {
 
 	// make http request to get the data 
 
-	/*restApi.getStockResults().then(function(results){
-				var data = JSON.parse(results.data);
-	  			console.log("Got result "+ JSON.stringify(data,null,4));
+	restApi.getStockResults().then(function(results){
+				//var data = JSON.parse(results.data);
+	  			console.log("Got result "+results);
 			},function(err){
 				console.log("Error in results");
 			});
-*/
 
+	
 	//var dataStream = $websocket('ws://54.242.218.128:9000/sock/ws');
 	var dataStream = $websocket('ws://127.0.0.1:9000/sock/ws');
 
@@ -33,7 +33,7 @@ function stockController($scope,$rootScope,$location,$http,$websocket,restApi) {
 	  		/*console.log(typeof(key) +" key "+ key);
 	  		console.log(typeof(value) +" value "+ value);*/
 	  	});
-	  	$scope.isWorking = message.data['time'];
+	  	$scope.results = message.data['time'];
    	});
 
 	dataStream.onOpen(function() {

@@ -1,14 +1,4 @@
-import argparse
-import random
-import os
-import time
-import cherrypy
-import threading
-import redis
-import requests
-import urllib2
-import json
-
+import argparse,random,os,time,cherrypy,threading,redis,requests,urllib2,json
 
 from bs4 import BeautifulSoup
 from threading import Thread
@@ -35,22 +25,15 @@ class StockParser:
         return jsonData
         #json['time']
 
-class RedisInstance(object):
-    def __init__(self):
-        self.DB = redis.StrictRedis(host='localhost', port=6379, db=0)
-    def getRedisInstance(self):
-        return self.DB
-    
-
 class RedisResultSender(Thread):
     def __init__(self,threadName):
         Thread.__init__(self)
-        self.DB = RedisInstance().getRedisInstance()
+        self.DB = redis.StrictRedis(host='localhost', port=6379, db=0)
         self.name = threadName
         self.count = 0
         url = "https://www.nseindia.com/live_market/dynaContent/live_analysis/gainers/niftyGainers1.json"
         self.StockParser = StockParser(url)
-        cherrypy.engine.publish('websocket-broadcast', "Thread instance created init method ")
+        cherrypy.engine.publish('websocket-broadcast', "Thread instance created init method")
 
     def run(self):
         cherrypy.log("Thread started")
@@ -77,7 +60,7 @@ class ChatWebSocketHandler(WebSocket):
         cherrypy.engine.publish('websocket-broadcast', TextMessage(reason))
 
 def CORS():
-    cherrypy.response.headers["Access-Control-Allow-Origin"] = "http://localhost"
+    cherrypy.response.headers["Access-Control-Allow-Origin"] = "http://0.0.0.0:9000"
 
 class WS(object):
     @cherrypy.expose
@@ -90,12 +73,13 @@ class Static(object):
     def index(self):
         pass
 
+class Api(object):
     @cherrypy.expose
-    def getLatestData(self):
-        cherrypy.response.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:9000"
+    def get_latest_data(self):
         cherrypy.log("Requested")
-        DB = RedisInstance()
+        DB = redis.StrictRedis(host='localhost', port=6379, db=0)
         results = DB.get('nifty50')
+        cherrypy.log("Data "+ results)
         return results
 
 root = os.path.dirname(os.path.abspath(__file__))
@@ -107,6 +91,12 @@ wsConfig = {
                         'tools.websocket.handler_cls': ChatWebSocketHandler,
                         'tools.log_headers.on': False,
                         'tools.log_tracebacks.on': False
+                    }
+            }
+
+apiConfig = {
+            '/get_latest_results': {
+                        'tools.CORS.on': True
                     }
             }
 
@@ -130,6 +120,11 @@ cherrypy.tree.mount(Static(),"/",staticConfig)
 
 #Mounting the WebSocket Class with reqd conf
 cherrypy.tree.mount(WS(),"/sock",wsConfig)
+
+#Mount the api 
+cherrypy.tree.mount(Api(),"/api",apiConfig)
+
+
 WebSocketPlugin(cherrypy.engine).subscribe()
 cherrypy.tools.websocket = WebSocketTool()
 cherrypy.config.update({    'server.socket_host': "0.0.0.0",

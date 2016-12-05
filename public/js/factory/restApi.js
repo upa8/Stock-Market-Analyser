@@ -1,16 +1,17 @@
 function restApi( $q , $rootScope,$http) {
-	//var baseUrl =  'http://10.20.14.83:9003';//"http://124.124.83.165:9000";
-	var baseUrl =  'http://127.0.0.1:9000';//"http://124.124.83.165:9000";
 	
-	console.log("Rest api Initiated");
+	//var baseUrl = $websocket('http://54.242.218.128:9000/api');
+	var baseUrl =  'http://127.0.0.1:9000/api';
+	
 	var restApi = {};
 	
-	// login
+	// getStock results
 	restApi.getStockResults = function(username,password){
+			console.log("Rest api called");
 			var defer=$q.defer();
 			$.ajax({
 		        type: "GET",
-		        url: baseUrl +'/getLatestData',
+		        url: baseUrl +'/get_latest_data',
 		        contentType: "application/json",
 		        headers: {
 	        		'Access-Control-Allow-Origin': baseUrl 
@@ -26,8 +27,5 @@ function restApi( $q , $rootScope,$http) {
 		    });
 			return defer.promise;
 	};
-	
-
 	return restApi;
-	
 }
