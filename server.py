@@ -64,8 +64,11 @@ class RedisResultSender(Thread):
                 # SLEEP FOR SAT AND SUNDAY MINUTES
 
                 # pause for 2 and half minutes to update new data
-                time.sleep(130) # CALCULATE THE TIME 
                 self.DB.set('newData','1')
+                cherrypy.log('waiting')
+                time.sleep(130) # CALCULATE THE TIME
+                cherrypy.log('wait over, new request') 
+                
                 
 
 ###############################################################################            
